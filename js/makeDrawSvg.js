@@ -3,12 +3,15 @@ import HexagonSVG from './hexagon.js';
 class MakeDrawSVG {
     constructor(studentsArray) {
         this._studentsArray = studentsArray;
+        this._drawSVG = document.createElementNS("http://www.w3.org/2000/svg", "g");
         this._buildDraw();
     }
 
     _buildDraw() {
-        this._drawSVG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        this._drawHexagons();
+    }
 
+    _drawHexagons() {
         let rubyHex = new HexagonSVG("#E50C21", { x: 500, y: 140 }, 100);
         this._drawSVG.appendChild(rubyHex.Get());
 
