@@ -63,7 +63,7 @@ class HexagonSVG {
 
     _calculateVertexCoordinates() {
         let angle = -Math.PI / 2;
-        let shortRadius = this._hexagonRadius * 3 / 5;
+        let shortRadius = this._hexagonRadius * 5 / 7;
         
         for (let index = 0; index < 6; index++) {
             let vex = this._hexagonCenter.x + this._hexagonRadius * Math.cos(angle);
