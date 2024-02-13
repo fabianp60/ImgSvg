@@ -14,11 +14,8 @@ class TextSVG {
     }
 
     _createSVG() {
-        let words = this._text.split(' ');
-        let arrayMiddle = Math.ceil(words.length / 2);
+        let lines = this._preparedLines(this._text);
         let fontSize = this._containerRadius * 0.15;
-        let firstLine = words.slice(0, arrayMiddle).join(' ');
-        let secondLine = words.slice(arrayMiddle).join(' ');
 
         this._textSVG = document.createElementNS("http://www.w3.org/2000/svg", "text");
         this._textSVG.setAttribute("x", this._textCenter.x);
@@ -30,16 +27,34 @@ class TextSVG {
         this._textSVG.setAttribute("font-family", 'Segoe UI, Calibri, Open Sans, Roboto, Arial, sans-serif');
         this._textSVG.setAttribute("fill", this._textColor);
 
-        let tspan1 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspan1.textContent = firstLine;
-        this._textSVG.appendChild(tspan1);
-
-        let tspan2 = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-        tspan2.textContent = secondLine;
-        tspan2.setAttribute('x', this._textCenter.x);
-        tspan2.setAttribute('dy', '1.2em');
-        this._textSVG.appendChild(tspan2);
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i];
+            let tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            tspan.textContent = line;
+            tspan.setAttribute('x', this._textCenter.x);
+            tspan.setAttribute('dy', '1.2em');
+            this._textSVG.appendChild(tspan);
+        }        
     }
+
+    _toNameStr(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+
+    _preparedLines(mainStr) {
+        let words = mainStr.split(" ").map(this._toNameStr);
+        let wordPairs = [];
+
+        for (let i = 0; i < words.length; i += 2) {
+            let pair = words[i];
+            if (i + 1 < words.length) {
+                pair += " " + words[i + 1];
+            }
+            wordPairs.push(pair);
+        }
+        return wordPairs;
+    }
+
 
     Get() {
         return this._textSVG;

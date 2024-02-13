@@ -41,10 +41,10 @@ class MakeDrawSVG {
         let hexagon = new HexagonSVG(hexagonColor, center, radius, amt);
         this._drawSVG.appendChild(hexagon.Get());
 
-        let scoreText = new TextSVG(studentData.puntaje.toString(),"#fff", { x: center.x, y: center.y - 30 }, radius);
+        let scoreText = new TextSVG(studentData.puntaje.toString(),"#fff", { x: center.x, y: center.y - 60 }, radius);
         this._drawSVG.appendChild(scoreText.Get());
 
-        let nameText = new TextSVG(studentData.nombre,"#000", center, radius);
+        let nameText = new TextSVG(studentData.nombre,"#000", { x: center.x, y: center.y - 10 }, radius);
         this._drawSVG.appendChild(nameText.Get());
     }
 
