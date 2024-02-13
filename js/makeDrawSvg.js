@@ -44,7 +44,7 @@ class MakeDrawSVG {
         let scoreText = new TextSVG(studentData.puntaje.toString(),"#fff", { x: center.x, y: center.y - 60 }, radius);
         this._drawSVG.appendChild(scoreText.Get());
 
-        let nameText = new TextSVG(studentData.nombre,"#000", { x: center.x, y: center.y - 10 }, radius);
+        let nameText = new TextSVG(studentData.nombre,"#000", { x: center.x, y: center.y - 25 }, radius);
         this._drawSVG.appendChild(nameText.Get());
     }
 
