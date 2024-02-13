@@ -1,4 +1,5 @@
-import HexagonSVG from './hexagon.js';
+import HexagonSVG from './hexagonSvg.js';
+import TextSVG from './textSvg.js';
 
 class MakeDrawSVG {
     constructor(studentsArray) {
@@ -8,43 +9,43 @@ class MakeDrawSVG {
     }
 
     _buildDraw() {
-        this._drawHexagons();
+        this._drawBadges();
     }
 
-    _drawHexagons() {
-        let rubyHex = new HexagonSVG("#E50C21", { x: 500, y: 140 }, 100);
-        this._drawSVG.appendChild(rubyHex.Get());
-
+    _drawBadges() {
+        this._drawBadge(this._studentsArray[0], "#E50C21", { x: 500, y: 140 }, 100);
         // 90 a la izquierda o derecha, 160 mas hacia abajo
         // Zafiro
-        let sapphire1Hex = new HexagonSVG("#3282F6", { x: 410, y: 300 }, 100, 10);
-        this._drawSVG.appendChild(sapphire1Hex.Get());
-
-        let sapphire2Hex = new HexagonSVG("#3282F6", { x: 590, y: 300 }, 100, 10);
-        this._drawSVG.appendChild(sapphire2Hex.Get());
-
+        this._drawBadge(this._studentsArray[1], "#3282F6", { x: 410, y: 300 }, 100, 10);
+        
+        this._drawBadge(this._studentsArray[2], "#3282F6", { x: 590, y: 300 }, 100, 10);
+        
         // Oro
-        let gold1Hex = new HexagonSVG("#C39B00", { x: 320, y: 460 }, 100, 30);
-        this._drawSVG.appendChild(gold1Hex.Get());
+        this._drawBadge(this._studentsArray[3], "#C39B00", { x: 320, y: 460 }, 100, 30);
 
-        let gold2Hex = new HexagonSVG("#C39B00", { x: 500, y: 460 }, 100, 30);
-        this._drawSVG.appendChild(gold2Hex.Get());
+        this._drawBadge(this._studentsArray[4], "#C39B00", { x: 500, y: 460 }, 100, 30);
 
-        let gold3Hex = new HexagonSVG("#C39B00", { x: 680, y: 460 }, 100, 30);
-        this._drawSVG.appendChild(gold3Hex.Get());
+        this._drawBadge(this._studentsArray[5], "#C39B00", { x: 680, y: 460 }, 100, 30);
 
         // Plata
-        let silver1Hex = new HexagonSVG("#989898", { x: 230, y: 620 }, 100);
-        this._drawSVG.appendChild(silver1Hex.Get());
+        this._drawBadge(this._studentsArray[6], "#989898", { x: 230, y: 620 }, 100);
 
-        let silver2Hex = new HexagonSVG("#989898", { x: 410, y: 620 }, 100);
-        this._drawSVG.appendChild(silver2Hex.Get());
+        this._drawBadge(this._studentsArray[7], "#989898", { x: 410, y: 620 }, 100);
 
-        let silver3Hex = new HexagonSVG("#989898", { x: 590, y: 620 }, 100);
-        this._drawSVG.appendChild(silver3Hex.Get());
+        this._drawBadge(this._studentsArray[8], "#989898", { x: 590, y: 620 }, 100);
 
-        let silver4Hex = new HexagonSVG("#989898", { x: 770, y: 620 }, 100);
-        this._drawSVG.appendChild(silver4Hex.Get());
+        this._drawBadge(this._studentsArray[9], "#989898", { x: 770, y: 620 }, 100);
+    }
+
+    _drawBadge(studentData, hexagonColor, center, radius, amt = 20) {
+        let hexagon = new HexagonSVG(hexagonColor, center, radius, amt);
+        this._drawSVG.appendChild(hexagon.Get());
+
+        let scoreText = new TextSVG(studentData.puntaje.toString(),"#fff", { x: center.x, y: center.y - 30 }, radius);
+        this._drawSVG.appendChild(scoreText.Get());
+
+        let nameText = new TextSVG(studentData.nombre,"#000", center, radius);
+        this._drawSVG.appendChild(nameText.Get());
     }
 
     Get() {
