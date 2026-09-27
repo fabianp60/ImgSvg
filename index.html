@@ -1,33 +1,76 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Imagen SVG</title>
+    <title>Imagen SVG - Generador de Medallero</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div class="container text-white">
-        <h5 class="text-center my-4">Imagen SVG</h5>
-        <div id="img-wrap" class="d-flex justify-content-center py-4 my-4">
+    <div class="container text-white pb-5">
+        <h3 class="text-center my-4">Generador de Imagen SVG - Medallero de Estudiantes</h3>
+        
+        <div id="img-wrap" class="d-flex justify-content-center py-4 my-3">
             <svg class="bg-white" width="1000" height="800">
             </svg>
         </div>
-        <div class="input-group mb-3">          
-            <div class="input-group" id="exportButtons">
-                <span class="input-group-text" id="exportFileNameLabel">Exportar imagen</span>
-                <input id="exportFileName" type="text" class="form-control" 
-                    placeholder="Nombre del archivo para exportar" 
-                    aria-label="Nombre del archivo para exportar" 
-                    aria-describedby="exportFileNameLabel">
-                <button class="btn btn-primary svg" type="button">SVG</button>
-                <button class="btn btn-primary png" type="button">PNG</button>
+
+        <div class="input-group mb-4" id="exportButtons">
+            <span class="input-group-text" id="exportFileNameLabel">Exportar imagen</span>
+            <input id="exportFileName" type="text" class="form-control bg-dark text-light border-secondary" 
+                placeholder="Nombre del archivo para exportar" 
+                aria-label="Nombre del archivo para exportar" 
+                aria-describedby="exportFileNameLabel">
+            <button class="btn btn-primary svg" type="button">Exportar SVG</button>
+            <button class="btn btn-success png" type="button">Exportar PNG</button>
+        </div>
+
+        <!-- Editor de Datos -->
+        <div class="card bg-dark text-white border-secondary shadow mb-4">
+            <div class="card-header bg-dark border-secondary d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0">✏️ Editar Datos de Estudiantes</h5>
+                <div class="btn-group" role="group">
+                    <button id="btnViewTable" class="btn btn-sm btn-primary active">Tabla</button>
+                    <button id="btnViewJson" class="btn btn-sm btn-outline-secondary">JSON</button>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Modo Tabla -->
+                <div id="tableView">
+                    <p class="text-muted small">Modifica los nombres y puntajes directamente en la tabla. El gráfico se actualizará al presionar "Actualizar Imagen SVG".</p>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover table-bordered align-middle">
+                            <thead>
+                                <tr class="table-active text-center">
+                                    <th style="width: 90px;">Puesto</th>
+                                    <th>Nombre del Estudiante</th>
+                                    <th style="width: 180px;">Puntaje</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Modo JSON -->
+                <div id="jsonView" class="d-none">
+                    <p class="text-muted small">Edita o pega directamente la estructura JSON con los 10 estudiantes.</p>
+                    <textarea id="jsonTextarea" class="form-control bg-dark text-light border-secondary font-monospace" rows="10" spellcheck="false"></textarea>
+                    <div id="jsonError" class="alert alert-danger mt-2 py-1 px-3 d-none small">JSON inválido. Por favor revisa el formato.</div>
+                </div>
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
+                    <button id="btnRenderSvg" class="btn btn-warning fw-bold px-4">🔄 Actualizar Imagen SVG</button>
+                    <button id="btnShareUrl" class="btn btn-outline-info">🔗 Copiar Enlace con Datos Actuales</button>
+                </div>
             </div>
         </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
@@ -35,54 +78,189 @@
     <script type="module">
         import MakeDrawSVG from './js/makeDrawSvg.js';
         import ExportSvgImage from './js/exportSvgImage.js';
+
         let svgExporter;
         let exportFileNameInput;
 
-        
+        const defaultDatos = [
+            { puesto: 1,  puntaje: "70,15", nombre: "SARA SOFIA LORA LAVERDE" },
+            { puesto: 2,  puntaje: "69,69", nombre: "JUAN MANUEL VELASCO DORADO" },
+            { puesto: 3,  puntaje: "68,23", nombre: "EMMANUEL ORTEGA CALAMBAS" },
+            { puesto: 4,  puntaje: "68,00", nombre: "NICOLAS CORTES MERA" },
+            { puesto: 5,  puntaje: "67,54", nombre: "YOJAN DAVID LUCUMI PEÑA" },
+            { puesto: 6,  puntaje: "64,92", nombre: "KATERIN DAYANA YANDY BETANCO" },
+            { puesto: 7,  puntaje: "62,92", nombre: "SANTIAGO GARCIA POLINDARA" },
+            { puesto: 8,  puntaje: "62,69", nombre: "MARIA FERNANDA CHAMORRO COR" },
+            { puesto: 9,  puntaje: "60,00", nombre: "LAUREN MICHEL MINA QUIRAMA" },
+            { puesto: 10, puntaje: "59,77", nombre: "JOHAN DAYAN TORRES TRIVIÑO" }
+        ];
+
+        let currentDatos = loadDatosFromUrl() || defaultDatos;
+
         window.addEventListener("load", function () {
             const svgObj = document.getElementById("img-wrap").querySelector("svg");
             exportFileNameInput = document.getElementById("exportFileName");
-            svgExporter = new ExportSvgImage(svgObj);
-            svgObj.innerHTML = "";
 
-            const datos = [
-                { puesto: 1,  puntaje: "70,15", nombre: "SARA SOFIA LORA LAVERDE" },
-                { puesto: 2,  puntaje: "69,69", nombre: "JUAN MANUEL VELASCO DORADO" },
-                { puesto: 3,  puntaje: "68,23", nombre: "EMMANUEL ORTEGA CALAMBAS" },
-                { puesto: 4,  puntaje: "68,00", nombre: "NICOLAS CORTES MERA" },
-                { puesto: 5,  puntaje: "67,54", nombre: "YOJAN DAVID LUCUMI PEÑA" },
-                { puesto: 6,  puntaje: "64,92", nombre: "KATERIN DAYANA YANDY BETANCO" },
-                { puesto: 7,  puntaje: "62,92", nombre: "SANTIAGO GARCIA POLINDARA" },
-                { puesto: 8,  puntaje: "62,69", nombre: "MARIA FERNANDA CHAMORRO COR" },
-                { puesto: 9,  puntaje: "60,00", nombre: "LAUREN MICHEL MINA QUIRAMA" },
-                { puesto: 10, puntaje: "59,77", nombre: "JOHAN DAYAN TORRES TRIVIÑO" }
-            ];
+            renderTable(currentDatos);
+            updateJsonTextarea(currentDatos);
+            renderSvg(currentDatos, svgObj);
 
-            let drawSvg = new MakeDrawSVG(datos);
-            svgObj.appendChild(drawSvg.Get());
-            
-            let btnExportSvg = document.getElementById("exportButtons").querySelector("button.svg");
-            let btnExportPng = document.getElementById("exportButtons").querySelector("button.png");
-            
-            btnExportSvg.addEventListener("click",()=>{
-                if(validateFilenameToExport(exportFileNameInput.value)) {
+            // Cambiar entre vista de tabla y JSON
+            const btnViewTable = document.getElementById("btnViewTable");
+            const btnViewJson = document.getElementById("btnViewJson");
+            const tableView = document.getElementById("tableView");
+            const jsonView = document.getElementById("jsonView");
+
+            btnViewTable.addEventListener("click", () => {
+                btnViewTable.classList.replace("btn-outline-secondary", "btn-primary");
+                btnViewJson.classList.replace("btn-primary", "btn-outline-secondary");
+                tableView.classList.remove("d-none");
+                jsonView.classList.add("d-none");
+                try {
+                    const parsed = JSON.parse(document.getElementById("jsonTextarea").value);
+                    if (Array.isArray(parsed)) {
+                        currentDatos = parsed;
+                        renderTable(currentDatos);
+                    }
+                } catch (e) {}
+            });
+
+            btnViewJson.addEventListener("click", () => {
+                btnViewJson.classList.replace("btn-outline-secondary", "btn-primary");
+                btnViewTable.classList.replace("btn-primary", "btn-outline-secondary");
+                jsonView.classList.remove("d-none");
+                tableView.classList.add("d-none");
+                currentDatos = getDatosFromTable();
+                updateJsonTextarea(currentDatos);
+            });
+
+            // Botón para actualizar el SVG
+            document.getElementById("btnRenderSvg").addEventListener("click", () => {
+                let datosToRender;
+                if (!jsonView.classList.contains("d-none")) {
+                    try {
+                        datosToRender = JSON.parse(document.getElementById("jsonTextarea").value);
+                        document.getElementById("jsonError").classList.add("d-none");
+                        renderTable(datosToRender);
+                    } catch (e) {
+                        document.getElementById("jsonError").classList.remove("d-none");
+                        return;
+                    }
+                } else {
+                    datosToRender = getDatosFromTable();
+                    updateJsonTextarea(datosToRender);
+                }
+                currentDatos = datosToRender;
+                renderSvg(currentDatos, svgObj);
+            });
+
+            // Botón de exportación SVG
+            document.getElementById("exportButtons").querySelector("button.svg").addEventListener("click", () => {
+                if (validateFilenameToExport(exportFileNameInput.value)) {
                     svgExporter.ExportSvgFile(exportFileNameInput.value);
                 }
             });
 
-            btnExportPng.addEventListener("click",()=>{
-                if(validateFilenameToExport(exportFileNameInput.value)) {
+            // Botón de exportación PNG
+            document.getElementById("exportButtons").querySelector("button.png").addEventListener("click", () => {
+                if (validateFilenameToExport(exportFileNameInput.value)) {
                     svgExporter.ExportPngFile(exportFileNameInput.value);
                 }
             });
+
+            // Botón para compartir URL con datos codificados
+            document.getElementById("btnShareUrl").addEventListener("click", () => {
+                const datos = jsonView.classList.contains("d-none") ? getDatosFromTable() : JSON.parse(document.getElementById("jsonTextarea").value);
+                const jsonStr = JSON.stringify(datos);
+                const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(jsonStr))));
+                const url = window.location.origin + window.location.pathname + "#data=" + encoded;
+                
+                navigator.clipboard.writeText(url).then(() => {
+                    alert("¡Enlace copiado al portapapeles! Cualquier persona que abra este enlace verá la imagen con los datos que ingresaste.");
+                }).catch(() => {
+                    prompt("Copia este enlace para compartir:", url);
+                });
+            });
         });
 
+        function renderSvg(datos, svgObj) {
+            svgObj.innerHTML = "";
+            let drawSvg = new MakeDrawSVG(datos);
+            svgObj.appendChild(drawSvg.Get());
+            svgExporter = new ExportSvgImage(svgObj);
+        }
+
+        function renderTable(datos) {
+            const tbody = document.getElementById("studentTableBody");
+            tbody.innerHTML = "";
+            for (let i = 0; i < 10; i++) {
+                const item = datos[i] || { puesto: i + 1, puntaje: "", nombre: "" };
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="text-center fw-bold">${i + 1}</td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary student-nombre" 
+                            value="${escapeHtml(item.nombre || '')}" placeholder="Nombre del estudiante">
+                    </td>
+                    <td>
+                        <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary text-center student-puntaje" 
+                            value="${escapeHtml(item.puntaje !== undefined ? String(item.puntaje) : '')}" placeholder="00,00">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function getDatosFromTable() {
+            const rows = document.querySelectorAll("#studentTableBody tr");
+            const datos = [];
+            rows.forEach((tr, index) => {
+                const nombre = tr.querySelector(".student-nombre").value.trim();
+                const puntaje = tr.querySelector(".student-puntaje").value.trim();
+                datos.push({
+                    puesto: index + 1,
+                    puntaje: puntaje,
+                    nombre: nombre
+                });
+            });
+            return datos;
+        }
+
+        function updateJsonTextarea(datos) {
+            document.getElementById("jsonTextarea").value = JSON.stringify(datos, null, 4);
+        }
+
+        function loadDatosFromUrl() {
+            try {
+                if (window.location.hash.startsWith("#data=")) {
+                    const encoded = window.location.hash.replace("#data=", "");
+                    const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
+                    const parsed = JSON.parse(jsonStr);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        return parsed;
+                    }
+                }
+            } catch (e) {
+                console.warn("No se pudo cargar datos desde la URL", e);
+            }
+            return null;
+        }
+
         function validateFilenameToExport(fileName) {
-            if(fileName.length <= 0) {
+            if (fileName.length <= 0) {
                 alert("Falta el nombre del archivo a exportar");
                 return false;
             }
             return true;
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
         }
     </script>
 </body>
