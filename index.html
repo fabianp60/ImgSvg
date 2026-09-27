@@ -14,13 +14,13 @@
     <div class="container text-white pb-5">
         <h3 class="text-center my-4">Generador de Imagen SVG - Medallero de Estudiantes</h3>
         
-        <div id="img-wrap" class="d-flex justify-content-center py-4 my-3">
-            <svg class="bg-white" width="1000" height="800">
+        <div id="img-wrap" class="d-flex justify-content-center py-3 my-3">
+            <svg class="bg-white shadow rounded" width="1000" height="1050" viewBox="0 0 1000 1050">
             </svg>
         </div>
 
         <div class="input-group mb-4" id="exportButtons">
-            <span class="input-group-text" id="exportFileNameLabel">Exportar imagen</span>
+            <span class="input-group-text bg-secondary text-white border-secondary" id="exportFileNameLabel">Exportar imagen</span>
             <input id="exportFileName" type="text" class="form-control bg-dark text-light border-secondary" 
                 placeholder="Nombre del archivo para exportar" 
                 aria-label="Nombre del archivo para exportar" 
@@ -29,7 +29,60 @@
             <button class="btn btn-success png" type="button">Exportar PNG</button>
         </div>
 
-        <!-- Editor de Datos -->
+        <!-- Panel de Personalización de Títulos y Escudo -->
+        <div class="card bg-dark text-white border-secondary shadow mb-4">
+            <div class="card-header bg-dark border-secondary py-3">
+                <h5 class="mb-0">🎨 Personalizar Títulos y Escudo del Colegio</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <!-- Sección Títulos -->
+                    <div class="col-md-6 border-end border-secondary pe-md-4">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="chkShowTitles" checked>
+                            <label class="form-check-label fw-bold" for="chkShowTitles">Mostrar Títulos en la Imagen</label>
+                        </div>
+                        <div id="titlesFields">
+                            <div class="mb-2">
+                                <label for="inputTitle1" class="form-label small text-info mb-1">Línea 1 (Título Principal):</label>
+                                <input type="text" id="inputTitle1" class="form-control form-control-sm bg-dark text-light border-secondary" value="INSTITUCIÓN EDUCATIVA CAUCA">
+                            </div>
+                            <div class="mb-2">
+                                <label for="inputTitle2" class="form-label small text-warning mb-1">Línea 2 (Subtítulo):</label>
+                                <input type="text" id="inputTitle2" class="form-control form-control-sm bg-dark text-light border-secondary" value="MEJORES DIEZ PUNTAJES GLOBALES">
+                            </div>
+                            <div class="mb-2">
+                                <label for="inputTitle3" class="form-label small text-light mb-1">Línea 3 (Detalle / Año):</label>
+                                <input type="text" id="inputTitle3" class="form-control form-control-sm bg-dark text-light border-secondary" value="DE LAS PRUEBAS SABER 11 2026">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sección Escudo -->
+                    <div class="col-md-6 ps-md-4">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="chkShowShields" checked>
+                            <label class="form-check-label fw-bold" for="chkShowShields">Mostrar Escudo del Colegio</label>
+                        </div>
+                        <div id="shieldsFields">
+                            <div class="mb-2">
+                                <label for="selectShieldPosition" class="form-label small text-light mb-1">Ubicación del Escudo:</label>
+                                <select id="selectShieldPosition" class="form-select form-select-sm bg-dark text-light border-secondary">
+                                    <option value="both" selected>Ambos Lados (Izquierda y Derecha)</option>
+                                    <option value="left">Solo a la Izquierda</option>
+                                    <option value="right">Solo a la Derecha</option>
+                                </select>
+                            </div>
+                            <div class="p-2 mt-3 rounded border border-secondary bg-black bg-opacity-25 small text-muted">
+                                📌 El escudo guardado en <code>img/escudo.jpg</code> se incluye automáticamente en la imagen SVG/PNG.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Editor de Estudiantes -->
         <div class="card bg-dark text-white border-secondary shadow mb-4">
             <div class="card-header bg-dark border-secondary d-flex justify-content-between align-items-center py-3">
                 <h5 class="mb-0">✏️ Editar Datos de Estudiantes</h5>
@@ -41,7 +94,7 @@
             <div class="card-body">
                 <!-- Modo Tabla -->
                 <div id="tableView">
-                    <p class="text-muted small">Modifica los nombres y puntajes directamente en la tabla. El gráfico se actualizará al presionar "Actualizar Imagen SVG".</p>
+                    <p class="text-muted small">Modifica los nombres y puntajes directamente en la tabla. La imagen SVG se actualizará automáticamente con cada cambio.</p>
                     <div class="table-responsive">
                         <table class="table table-dark table-hover table-bordered align-middle">
                             <thead>
@@ -64,13 +117,17 @@
                     <div id="jsonError" class="alert alert-danger mt-2 py-1 px-3 d-none small">JSON inválido. Por favor revisa el formato.</div>
                 </div>
 
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3">
-                    <button id="btnRenderSvg" class="btn btn-warning fw-bold px-4">🔄 Actualizar Imagen SVG</button>
+                <div class="d-flex flex-wrap justify-content-end align-items-center gap-2 mt-3">
                     <button id="btnShareUrl" class="btn btn-outline-info">🔗 Copiar Enlace con Datos Actuales</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Botón Flotante para Subir a la Imagen SVG -->
+    <button id="btnFloatingScroll" class="btn btn-warning shadow-lg rounded-pill position-fixed bottom-0 end-0 m-4 px-4 py-2 fw-bold d-none" style="z-index: 1080;">
+        ⬆️ Ver Imagen SVG
+    </button>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
@@ -81,6 +138,7 @@
 
         let svgExporter;
         let exportFileNameInput;
+        let cachedEscudoDataUrl = null;
 
         const defaultDatos = [
             { puesto: 1,  puntaje: "70,15", nombre: "SARA SOFIA LORA LAVERDE" },
@@ -95,15 +153,66 @@
             { puesto: 10, puntaje: "59,77", nombre: "JOHAN DAYAN TORRES TRIVIÑO" }
         ];
 
-        let currentDatos = loadDatosFromUrl() || defaultDatos;
+        const defaultOptions = {
+            showTitles: true,
+            titleLine1: "INSTITUCIÓN EDUCATIVA CAUCA",
+            titleLine2: "MEJORES DIEZ PUNTAJES GLOBALES",
+            titleLine3: "DE LAS PRUEBAS SABER 11 2026",
+            showShields: true,
+            shieldPosition: "both"
+        };
 
-        window.addEventListener("load", function () {
+        let loadedState = loadStateFromUrl();
+        let currentDatos = (loadedState && loadedState.datos) ? loadedState.datos : defaultDatos;
+        let currentOptions = Object.assign({}, defaultOptions, (loadedState && loadedState.options) ? loadedState.options : {});
+
+        window.addEventListener("load", async function () {
             const svgObj = document.getElementById("img-wrap").querySelector("svg");
             exportFileNameInput = document.getElementById("exportFileName");
 
+            // Cargar imagen del escudo en base64 para evitar canvas tainted al exportar a PNG
+            cachedEscudoDataUrl = await getEscudoDataUrl();
+
+            // Inicializar formulario de opciones
+            applyOptionsToUI(currentOptions);
+
             renderTable(currentDatos);
             updateJsonTextarea(currentDatos);
-            renderSvg(currentDatos, svgObj);
+            updateSvgView();
+
+            // Botón Flotante para subir a la imagen
+            const btnFloatingScroll = document.getElementById("btnFloatingScroll");
+            window.addEventListener("scroll", () => {
+                const imgWrap = document.getElementById("img-wrap");
+                const rect = imgWrap.getBoundingClientRect();
+                if (rect.bottom < 150) {
+                    btnFloatingScroll.classList.remove("d-none");
+                } else {
+                    btnFloatingScroll.classList.add("d-none");
+                }
+            });
+
+            btnFloatingScroll.addEventListener("click", () => {
+                document.getElementById("img-wrap").scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+
+            // Actualización AUTOMÁTICA de la imagen SVG en cualquier cambio de los controles
+            document.getElementById("chkShowTitles").addEventListener("change", (e) => {
+                document.getElementById("titlesFields").style.opacity = e.target.checked ? "1" : "0.4";
+                updateSvgView();
+            });
+            document.getElementById("chkShowShields").addEventListener("change", (e) => {
+                document.getElementById("shieldsFields").style.opacity = e.target.checked ? "1" : "0.4";
+                updateSvgView();
+            });
+            document.getElementById("inputTitle1").addEventListener("input", updateSvgView);
+            document.getElementById("inputTitle2").addEventListener("input", updateSvgView);
+            document.getElementById("inputTitle3").addEventListener("input", updateSvgView);
+            document.getElementById("selectShieldPosition").addEventListener("change", updateSvgView);
+
+            // Actualización AUTOMÁTICA en cambios de la tabla o JSON
+            document.getElementById("studentTableBody").addEventListener("input", updateSvgView);
+            document.getElementById("jsonTextarea").addEventListener("input", updateSvgView);
 
             // Cambiar entre vista de tabla y JSON
             const btnViewTable = document.getElementById("btnViewTable");
@@ -121,6 +230,7 @@
                     if (Array.isArray(parsed)) {
                         currentDatos = parsed;
                         renderTable(currentDatos);
+                        updateSvgView();
                     }
                 } catch (e) {}
             });
@@ -132,36 +242,17 @@
                 tableView.classList.add("d-none");
                 currentDatos = getDatosFromTable();
                 updateJsonTextarea(currentDatos);
+                updateSvgView();
             });
 
-            // Botón para actualizar el SVG
-            document.getElementById("btnRenderSvg").addEventListener("click", () => {
-                let datosToRender;
-                if (!jsonView.classList.contains("d-none")) {
-                    try {
-                        datosToRender = JSON.parse(document.getElementById("jsonTextarea").value);
-                        document.getElementById("jsonError").classList.add("d-none");
-                        renderTable(datosToRender);
-                    } catch (e) {
-                        document.getElementById("jsonError").classList.remove("d-none");
-                        return;
-                    }
-                } else {
-                    datosToRender = getDatosFromTable();
-                    updateJsonTextarea(datosToRender);
-                }
-                currentDatos = datosToRender;
-                renderSvg(currentDatos, svgObj);
-            });
-
-            // Botón de exportación SVG
+            // Exportar SVG
             document.getElementById("exportButtons").querySelector("button.svg").addEventListener("click", () => {
                 if (validateFilenameToExport(exportFileNameInput.value)) {
                     svgExporter.ExportSvgFile(exportFileNameInput.value);
                 }
             });
 
-            // Botón de exportación PNG
+            // Exportar PNG
             document.getElementById("exportButtons").querySelector("button.png").addEventListener("click", () => {
                 if (validateFilenameToExport(exportFileNameInput.value)) {
                     svgExporter.ExportPngFile(exportFileNameInput.value);
@@ -171,23 +262,86 @@
             // Botón para compartir URL con datos codificados
             document.getElementById("btnShareUrl").addEventListener("click", () => {
                 const datos = jsonView.classList.contains("d-none") ? getDatosFromTable() : JSON.parse(document.getElementById("jsonTextarea").value);
-                const jsonStr = JSON.stringify(datos);
+                const options = getOptionsFromUI();
+                const payload = { datos, options };
+                const jsonStr = JSON.stringify(payload);
                 const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(jsonStr))));
-                const url = window.location.origin + window.location.pathname + "#data=" + encoded;
+                const url = window.location.origin + window.location.pathname + "#payload=" + encoded;
                 
                 navigator.clipboard.writeText(url).then(() => {
-                    alert("¡Enlace copiado al portapapeles! Cualquier persona que abra este enlace verá la imagen con los datos que ingresaste.");
+                    alert("¡Enlace copiado al portapapeles! Cualquier persona que abra este enlace verá la imagen con los títulos, escudos y datos que personalizaste.");
                 }).catch(() => {
                     prompt("Copia este enlace para compartir:", url);
                 });
             });
         });
 
-        function renderSvg(datos, svgObj) {
+        function showUpdateNotice() {
+            if (updateNoticeToast) {
+                updateNoticeToast.show();
+            }
+        }
+
+        function hideUpdateNotice() {
+            if (updateNoticeToast) {
+                updateNoticeToast.hide();
+            }
+        }
+
+        function updateSvgView() {
+            const svgObj = document.getElementById("img-wrap").querySelector("svg");
+            const jsonView = document.getElementById("jsonView");
+            
+            let datosToRender;
+            if (!jsonView.classList.contains("d-none")) {
+                try {
+                    datosToRender = JSON.parse(document.getElementById("jsonTextarea").value);
+                    document.getElementById("jsonError").classList.add("d-none");
+                    renderTable(datosToRender);
+                } catch (e) {
+                    document.getElementById("jsonError").classList.remove("d-none");
+                    return;
+                }
+            } else {
+                datosToRender = getDatosFromTable();
+                updateJsonTextarea(datosToRender);
+            }
+
+            currentDatos = datosToRender;
+            currentOptions = getOptionsFromUI();
+
+            const svgHeight = (currentOptions.showTitles || currentOptions.showShields) ? 1050 : 800;
+            svgObj.setAttribute("height", svgHeight);
+            svgObj.setAttribute("viewBox", `0 0 1000 ${svgHeight}`);
+
             svgObj.innerHTML = "";
-            let drawSvg = new MakeDrawSVG(datos);
+            let drawSvg = new MakeDrawSVG(currentDatos, currentOptions);
             svgObj.appendChild(drawSvg.Get());
             svgExporter = new ExportSvgImage(svgObj);
+        }
+
+        function getOptionsFromUI() {
+            return {
+                showTitles: document.getElementById("chkShowTitles").checked,
+                titleLine1: document.getElementById("inputTitle1").value.trim(),
+                titleLine2: document.getElementById("inputTitle2").value.trim(),
+                titleLine3: document.getElementById("inputTitle3").value.trim(),
+                showShields: document.getElementById("chkShowShields").checked,
+                shieldPosition: document.getElementById("selectShieldPosition").value,
+                escudoUrl: cachedEscudoDataUrl || "img/escudo.jpg"
+            };
+        }
+
+        function applyOptionsToUI(options) {
+            document.getElementById("chkShowTitles").checked = options.showTitles !== false;
+            document.getElementById("inputTitle1").value = options.titleLine1 || "";
+            document.getElementById("inputTitle2").value = options.titleLine2 || "";
+            document.getElementById("inputTitle3").value = options.titleLine3 || "";
+            document.getElementById("chkShowShields").checked = options.showShields !== false;
+            document.getElementById("selectShieldPosition").value = options.shieldPosition || "both";
+            
+            document.getElementById("titlesFields").style.opacity = (options.showTitles !== false) ? "1" : "0.4";
+            document.getElementById("shieldsFields").style.opacity = (options.showShields !== false) ? "1" : "0.4";
         }
 
         function renderTable(datos) {
@@ -204,7 +358,7 @@
                     </td>
                     <td>
                         <input type="text" class="form-control form-control-sm bg-dark text-light border-secondary text-center student-puntaje" 
-                            value="${escapeHtml(item.puntaje !== undefined ? String(item.puntaje) : '')}" placeholder="00,00">
+                            value="${escapeHtml(item.puntaje !== undefined ? String(item.puntaje) : '')}" placeholder="000">
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -230,18 +384,38 @@
             document.getElementById("jsonTextarea").value = JSON.stringify(datos, null, 4);
         }
 
-        function loadDatosFromUrl() {
+        async function getEscudoDataUrl() {
             try {
-                if (window.location.hash.startsWith("#data=")) {
-                    const encoded = window.location.hash.replace("#data=", "");
+                const response = await fetch('img/escudo.jpg');
+                const blob = await response.blob();
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = () => resolve('img/escudo.jpg');
+                    reader.readAsDataURL(blob);
+                });
+            } catch (e) {
+                return 'img/escudo.jpg';
+            }
+        }
+
+        function loadStateFromUrl() {
+            try {
+                let hash = window.location.hash;
+                if (hash.startsWith("#payload=")) {
+                    const encoded = hash.replace("#payload=", "");
+                    const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
+                    return JSON.parse(jsonStr);
+                } else if (hash.startsWith("#data=")) {
+                    const encoded = hash.replace("#data=", "");
                     const jsonStr = decodeURIComponent(escape(atob(decodeURIComponent(encoded))));
                     const parsed = JSON.parse(jsonStr);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        return parsed;
+                    if (Array.isArray(parsed)) {
+                        return { datos: parsed };
                     }
                 }
             } catch (e) {
-                console.warn("No se pudo cargar datos desde la URL", e);
+                console.warn("No se pudo cargar estado desde la URL", e);
             }
             return null;
         }
