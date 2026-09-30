@@ -10,15 +10,21 @@ class ExportSvgImage {
         // Serializa el SVG a una cadena XML
         let xml = new XMLSerializer().serializeToString(this._svgDomObj);
     
+        const svgWidth = parseInt(this._svgDomObj.getAttribute('width')) || 1000;
+        const svgHeight = parseInt(this._svgDomObj.getAttribute('height')) || 1050;
+
         let img = new Image();
         img.onload = function () {
             // Crea un canvas del mismo tamaño que el SVG
             let canvas = document.createElement('canvas');
-            canvas.width = img.width;
-            canvas.height = img.height;
+            canvas.width = img.width || svgWidth;
+            canvas.height = img.height || svgHeight;
     
             let context = canvas.getContext('2d');
-            context.drawImage(img, 0, 0, img.width, img.height); // Dibuja el SVG en el canvas
+            // Garantizar fondo blanco sólido en el PNG exportado
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(img, 0, 0, canvas.width, canvas.height); // Dibuja el SVG en el canvas
     
             let png = canvas.toDataURL('image/png'); // Crea una imagen PNG
     

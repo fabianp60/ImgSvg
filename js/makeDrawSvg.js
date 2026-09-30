@@ -19,6 +19,7 @@ class MakeDrawSVG {
     }
 
     _buildDraw() {
+        this._drawBackground();
         if (this._options.showTitles) {
             this._drawTitles();
         }
@@ -26,6 +27,17 @@ class MakeDrawSVG {
             this._drawShields();
         }
         this._drawBadges();
+    }
+
+    _drawBackground() {
+        const bgRect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        const svgHeight = (this._options.showTitles || this._options.showShields) ? 1050 : 800;
+        bgRect.setAttribute("x", "0");
+        bgRect.setAttribute("y", "0");
+        bgRect.setAttribute("width", "1000");
+        bgRect.setAttribute("height", svgHeight.toString());
+        bgRect.setAttribute("fill", "#ffffff");
+        this._drawSVG.appendChild(bgRect);
     }
 
     _drawTitles() {

@@ -15,18 +15,23 @@
         <h3 class="text-center my-4">Generador de Imagen SVG - Medallero de Estudiantes</h3>
         
         <div id="img-wrap" class="d-flex justify-content-center py-3 my-3">
-            <svg class="bg-white shadow rounded" width="1000" height="1050" viewBox="0 0 1000 1050">
+            <svg class="bg-white shadow rounded" width="1000" height="1050" viewBox="0 0 1000 1050" style="background-color: #ffffff;">
             </svg>
         </div>
 
-        <div class="input-group mb-4" id="exportButtons">
-            <span class="input-group-text bg-secondary text-white border-secondary" id="exportFileNameLabel">Exportar imagen</span>
-            <input id="exportFileName" type="text" class="form-control bg-dark text-light border-secondary" 
-                placeholder="Nombre del archivo para exportar" 
-                aria-label="Nombre del archivo para exportar" 
-                aria-describedby="exportFileNameLabel">
-            <button class="btn btn-primary svg" type="button">Exportar SVG</button>
-            <button class="btn btn-success png" type="button">Exportar PNG</button>
+        <div class="mb-4">
+            <div class="input-group" id="exportButtons">
+                <span class="input-group-text bg-secondary text-white border-secondary" id="exportFileNameLabel">Exportar imagen</span>
+                <input id="exportFileName" type="text" class="form-control bg-dark text-light border-secondary" 
+                    placeholder="Nombre del archivo para exportar" 
+                    aria-label="Nombre del archivo para exportar" 
+                    aria-describedby="exportFileNameLabel">
+                <button class="btn btn-primary svg" type="button">Exportar SVG</button>
+                <button class="btn btn-success png" type="button">Exportar PNG</button>
+            </div>
+            <div id="exportFileNameFeedback" class="text-danger small mt-1 d-none fw-semibold">
+                ⚠️ Por favor ingresa el nombre del archivo para exportar.
+            </div>
         </div>
 
         <!-- Panel de Personalización de Títulos y Escudo -->
@@ -141,16 +146,16 @@
         let cachedEscudoDataUrl = null;
 
         const defaultDatos = [
-            { puesto: 1,  puntaje: "70,15", nombre: "SARA SOFIA LORA LAVERDE" },
-            { puesto: 2,  puntaje: "69,69", nombre: "JUAN MANUEL VELASCO DORADO" },
-            { puesto: 3,  puntaje: "68,23", nombre: "EMMANUEL ORTEGA CALAMBAS" },
-            { puesto: 4,  puntaje: "68,00", nombre: "NICOLAS CORTES MERA" },
-            { puesto: 5,  puntaje: "67,54", nombre: "YOJAN DAVID LUCUMI PEÑA" },
-            { puesto: 6,  puntaje: "64,92", nombre: "KATERIN DAYANA YANDY BETANCO" },
-            { puesto: 7,  puntaje: "62,92", nombre: "SANTIAGO GARCIA POLINDARA" },
-            { puesto: 8,  puntaje: "62,69", nombre: "MARIA FERNANDA CHAMORRO COR" },
-            { puesto: 9,  puntaje: "60,00", nombre: "LAUREN MICHEL MINA QUIRAMA" },
-            { puesto: 10, puntaje: "59,77", nombre: "JOHAN DAYAN TORRES TRIVIÑO" }
+            { puesto: 1,  puntaje: 351, nombre: "SARA SOFIA LORA LAVERDE" },
+            { puesto: 2,  puntaje: 348, nombre: "JUAN MANUEL VELASCO DORADO" },
+            { puesto: 3,  puntaje: 341, nombre: "EMMANUEL ORTEGA CALAMBAS" },
+            { puesto: 4,  puntaje: 340, nombre: "NICOLAS CORTES MERA" },
+            { puesto: 5,  puntaje: 338, nombre: "YOJAN DAVID LUCUMI PEÑA" },
+            { puesto: 6,  puntaje: 325, nombre: "KATERIN DAYANA YANDY BETANCOURTH" },
+            { puesto: 7,  puntaje: 315, nombre: "SANTIAGO GARCIA POLINDARA" },
+            { puesto: 8,  puntaje: 313, nombre: "MARIA FERNANDA CHAMORRO CORONADO" },
+            { puesto: 9,  puntaje: 300, nombre: "LAUREN MICHEL MINA QUIRAMA" },
+            { puesto: 10, puntaje: 299, nombre: "JOHAN DAYAN TORRES TRIVIÑO" }
         ];
 
         const defaultOptions = {
@@ -211,8 +216,24 @@
             document.getElementById("selectShieldPosition").addEventListener("change", updateSvgView);
 
             // Actualización AUTOMÁTICA en cambios de la tabla o JSON
-            document.getElementById("studentTableBody").addEventListener("input", updateSvgView);
+            document.getElementById("studentTableBody").addEventListener("input", (e) => {
+                if (e.target && e.target.classList.contains("is-invalid") && e.target.value.trim().length > 0) {
+                    e.target.classList.remove("is-invalid");
+                }
+                updateSvgView();
+            });
             document.getElementById("jsonTextarea").addEventListener("input", updateSvgView);
+
+            // Limpiar error al escribir en el nombre del archivo
+            exportFileNameInput.addEventListener("input", () => {
+                if (exportFileNameInput.value.trim().length > 0) {
+                    exportFileNameInput.classList.remove("is-invalid");
+                    const feedbackEl = document.getElementById("exportFileNameFeedback");
+                    if (feedbackEl) {
+                        feedbackEl.classList.add("d-none");
+                    }
+                }
+            });
 
             // Cambiar entre vista de tabla y JSON
             const btnViewTable = document.getElementById("btnViewTable");
@@ -221,18 +242,28 @@
             const jsonView = document.getElementById("jsonView");
 
             btnViewTable.addEventListener("click", () => {
-                btnViewTable.classList.replace("btn-outline-secondary", "btn-primary");
-                btnViewJson.classList.replace("btn-primary", "btn-outline-secondary");
-                tableView.classList.remove("d-none");
-                jsonView.classList.add("d-none");
+                const jsonTextarea = document.getElementById("jsonTextarea");
+                const jsonError = document.getElementById("jsonError");
                 try {
-                    const parsed = JSON.parse(document.getElementById("jsonTextarea").value);
-                    if (Array.isArray(parsed)) {
-                        currentDatos = parsed;
-                        renderTable(currentDatos);
-                        updateSvgView();
+                    const parsed = JSON.parse(jsonTextarea.value);
+                    if (!Array.isArray(parsed)) {
+                        throw new Error("El JSON debe ser un arreglo de estudiantes.");
                     }
-                } catch (e) {}
+                    jsonTextarea.classList.remove("is-invalid");
+                    jsonError.classList.add("d-none");
+                    btnViewTable.classList.replace("btn-outline-secondary", "btn-primary");
+                    btnViewJson.classList.replace("btn-primary", "btn-outline-secondary");
+                    tableView.classList.remove("d-none");
+                    jsonView.classList.add("d-none");
+                    currentDatos = parsed;
+                    renderTable(currentDatos);
+                    updateSvgView();
+                } catch (e) {
+                    jsonError.textContent = "JSON inválido: " + (e.message || "Por favor revisa el formato antes de pasar a la tabla.");
+                    jsonError.classList.remove("d-none");
+                    jsonTextarea.classList.add("is-invalid");
+                    jsonTextarea.focus();
+                }
             });
 
             btnViewJson.addEventListener("click", () => {
@@ -248,14 +279,14 @@
             // Exportar SVG
             document.getElementById("exportButtons").querySelector("button.svg").addEventListener("click", () => {
                 if (validateFilenameToExport(exportFileNameInput.value)) {
-                    svgExporter.ExportSvgFile(exportFileNameInput.value);
+                    svgExporter.ExportSvgFile(exportFileNameInput.value.trim());
                 }
             });
 
             // Exportar PNG
             document.getElementById("exportButtons").querySelector("button.png").addEventListener("click", () => {
                 if (validateFilenameToExport(exportFileNameInput.value)) {
-                    svgExporter.ExportPngFile(exportFileNameInput.value);
+                    svgExporter.ExportPngFile(exportFileNameInput.value.trim());
                 }
             });
 
@@ -294,12 +325,20 @@
             
             let datosToRender;
             if (!jsonView.classList.contains("d-none")) {
+                const jsonTextarea = document.getElementById("jsonTextarea");
+                const jsonError = document.getElementById("jsonError");
                 try {
-                    datosToRender = JSON.parse(document.getElementById("jsonTextarea").value);
-                    document.getElementById("jsonError").classList.add("d-none");
+                    datosToRender = JSON.parse(jsonTextarea.value);
+                    if (!Array.isArray(datosToRender)) {
+                        throw new Error("El JSON debe ser un arreglo de estudiantes.");
+                    }
+                    jsonError.classList.add("d-none");
+                    jsonTextarea.classList.remove("is-invalid");
                     renderTable(datosToRender);
                 } catch (e) {
-                    document.getElementById("jsonError").classList.remove("d-none");
+                    jsonError.textContent = "JSON inválido: " + (e.message || "Por favor revisa el formato.");
+                    jsonError.classList.remove("d-none");
+                    jsonTextarea.classList.add("is-invalid");
                     return;
                 }
             } else {
@@ -421,9 +460,19 @@
         }
 
         function validateFilenameToExport(fileName) {
-            if (fileName.length <= 0) {
-                alert("Falta el nombre del archivo a exportar");
+            const trimmed = fileName ? fileName.trim() : "";
+            const feedbackEl = document.getElementById("exportFileNameFeedback");
+            if (trimmed.length <= 0) {
+                exportFileNameInput.classList.add("is-invalid");
+                if (feedbackEl) {
+                    feedbackEl.classList.remove("d-none");
+                }
+                exportFileNameInput.focus();
                 return false;
+            }
+            exportFileNameInput.classList.remove("is-invalid");
+            if (feedbackEl) {
+                feedbackEl.classList.add("d-none");
             }
             return true;
         }
